@@ -1,11 +1,5 @@
 // https://www.codewars.com/kata/52a78825cdfc2cfc87000005
 
-use std::{
-  cell::RefCell,
-  ops::{Deref, DerefMut},
-  rc::Rc,
-};
-
 use ExprItem::*;
 use ExprOp::*;
 use ParserExpectation::*;
@@ -13,7 +7,16 @@ use ParserExpectation::*;
 #[derive(Clone, Debug)]
 pub enum ExprItem {
   Literal(f64),
-  Parens(ExprRef),
+  Parens(Expr),
+}
+
+impl ExprItem {
+  pub fn expr(&mut self) -> Option<&mut Expr> {
+    match self {
+      Literal(_) => None,
+      Parens(e) => Some(e),
+    }
+  }
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
@@ -36,7 +39,7 @@ impl ExprOp {
   }
 }
 
-pub type ExprItemList = Vec<Box<(ExprOp, ExprItem)>>;
+pub type ExprItemList = Vec<(ExprOp, ExprItem)>;
 
 #[derive(Clone, Debug)]
 pub struct Expr {
@@ -44,8 +47,6 @@ pub struct Expr {
   open: bool,
   items: ExprItemList,
 }
-
-type ExprRef = Rc<RefCell<Expr>>;
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum ParserExpectation {
@@ -57,7 +58,7 @@ pub struct Calculator<'a> {
   pub input: &'a str,
   pub size: usize,
   pub offset: usize,
-  pub expr: ExprRef,
+  pub expr: Expr,
   pub expects: ParserExpectation,
   pub negated: bool,
   pub operator: ExprOp,
@@ -69,11 +70,11 @@ impl<'a> Calculator<'a> {
       input,
       size: input.chars().count(),
       offset: 0,
-      expr: Rc::new(RefCell::new(Expr {
+      expr: Expr {
         negated: false,
         open: true,
         items: vec![],
-      })),
+      },
       expects: ParserExpectation::ExpectsValue,
       negated: false,
       operator: ExprOp::Add,
@@ -106,14 +107,14 @@ impl<'a> Calculator<'a> {
           let operator = self.operator;
           let negated = self.negated;
           let expr = &mut self.opening();
-          expr.borrow_mut().items.push(Box::new((
+          expr.items.push((
             operator,
-            Parens(Rc::new(RefCell::new(Expr {
+            Parens(Expr {
               open: true,
               negated,
               items: vec![],
-            }))),
-          )));
+            }),
+          ));
 
           self.operator = Add;
           self.negated = false;
@@ -121,7 +122,7 @@ impl<'a> Calculator<'a> {
         }
         ')' if self.expects == ExpectsOperator => {
           let expr = self.opening();
-          expr.borrow_mut().open = false;
+          expr.open = false;
 
           self.negated = false;
           self.offset += 1;
@@ -147,71 +148,72 @@ impl<'a> Calculator<'a> {
       }
     }
 
-    let op_item = Box::new((
+    let op_item = (
       self.operator,
       Literal(s.parse::<f64>().unwrap() * bool_to_f64(!self.negated)),
-    ));
+    );
     self.negated = false;
     self.expects = ExpectsOperator;
 
     let expr = self.opening();
-    expr.borrow_mut().items.push(op_item);
+    expr.items.push(op_item);
   }
 
-  fn opening(&mut self) -> ExprRef {
-    Self::opening_in(self.expr.clone())
+  fn opening(&mut self) -> &mut Expr {
+    Self::opening_in(&mut self.expr)
   }
 
-  fn opening_in(e: ExprRef) -> ExprRef {
-    let mut current = e;
+  fn opening_in(e: &mut Expr) -> &mut Expr {
+    let mut expr = e;
 
-    while let Some(child_pair) = current.clone().borrow().items.last() {
-      let child = &child_pair.1;
-
-      match child {
+    while let Some(child_pair) = expr.items.last_mut() {
+      match &child_pair.1 {
         Literal(_) => {
           break;
         }
-        Parens(child_expr_ref) => {
-          let child_expr = child_expr_ref.borrow();
-          if child_expr.open {
-            current = child_expr_ref.clone();
+        Parens(child_expr) => {
+          if true {
+            if child_expr.open {
+              expr = expr.items.last_mut().unwrap().1.expr().unwrap();
+            } else {
+              break;
+            }
           } else {
-            break;
+            unreachable!();
           }
         }
       }
     }
 
-    current
+    expr
   }
 
   // Evaluation.
 
   pub fn eval(&mut self) -> f64 {
-    println!("{:?}", self.expr.borrow_mut().items);
-    Self::eval_items(&mut self.expr.borrow_mut().items)
+    println!("{:?}", self.expr.items);
+    Self::eval_items(&mut self.expr.items)
   }
 
   fn eval_items(items: &mut ExprItemList) -> f64 {
     // First pass: mul/div.
     combine_adjacent(items, |mut a, mut b| {
       let left_op = a.0;
-      let left_expr = &mut a.deref_mut().1;
+      let left_expr = &mut a.1;
       let right_op = b.0;
-      let right_expr = &mut b.deref_mut().1;
+      let right_expr = &mut b.1;
 
       match right_op {
         Add | Sub => None,
         Mul => {
           let left_value: f64 = Self::eval_item(left_expr);
           let right_value: f64 = Self::eval_item(right_expr);
-          Some(Box::new((left_op, Literal(left_value * right_value))))
+          Some((left_op, Literal(left_value * right_value)))
         }
         Div => {
           let left_value: f64 = Self::eval_item(left_expr);
           let right_value: f64 = Self::eval_item(right_expr);
-          Some(Box::new((left_op, Literal(left_value / right_value))))
+          Some((left_op, Literal(left_value / right_value)))
         }
       }
     });
@@ -235,10 +237,7 @@ impl<'a> Calculator<'a> {
   fn eval_item(item: &mut ExprItem) -> f64 {
     match item {
       Literal(v) => *v,
-      Parens(expr) => {
-        let mut expr = expr.deref().borrow_mut();
-        Self::eval_items(&mut expr.items) * bool_to_f64(!expr.negated)
-      }
+      Parens(expr) => Self::eval_items(&mut expr.items) * bool_to_f64(!expr.negated),
     }
   }
 }
