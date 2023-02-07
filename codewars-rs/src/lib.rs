@@ -1,2 +1,2 @@
-pub mod evaluate_mathematical_expressions;
-pub mod simplifying_multilinear_polynomials;
+pub mod _evaluate_mathematical_expressions;
+pub mod _simplifying_multilinear_polynomials;
