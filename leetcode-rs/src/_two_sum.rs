@@ -15,7 +15,7 @@ impl Solution {
       positions.insert(x, i as i32);
     }
 
-    vec![]  // Unreachable.
+    vec![] // Unreachable.
   }
 }
 
