@@ -1,2 +1,3 @@
+pub mod _efficient_power_modulo_n;
 pub mod _evaluate_mathematical_expressions;
 pub mod _simplifying_multilinear_polynomials;
