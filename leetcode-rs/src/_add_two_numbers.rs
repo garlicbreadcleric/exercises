@@ -13,16 +13,23 @@ impl ListNode {
   }
 
   pub fn from_vec(vec: Vec<i32>) -> Option<Box<Self>> {
-    if vec.is_empty() { None }
-    else {
+    if vec.is_empty() {
+      None
+    } else {
       let mut node = None;
       let mut current = &mut node;
 
       for x in vec {
         let next_node = Some(Box::new(ListNode { val: x, next: None }));
         match current {
-          None => { node = next_node; current = &mut node; },
-          Some(current_node) => { current_node.next = next_node; current = &mut current_node.next; },
+          None => {
+            node = next_node;
+            current = &mut node;
+          }
+          Some(current_node) => {
+            current_node.next = next_node;
+            current = &mut current_node.next;
+          }
         }
       }
 
@@ -51,19 +58,22 @@ impl Solution {
       let val_next = total % 10;
       total /= 10;
 
-      let next_node = Some(Box::new(ListNode { val: val_next, next: None }));
+      let next_node = Some(Box::new(ListNode {
+        val: val_next,
+        next: None,
+      }));
       match tail {
         None => {
           result = next_node;
           tail = &mut result;
-        },
+        }
         Some(current_node) => {
           current_node.next = next_node;
           tail = &mut current_node.next;
-        },
+        }
       }
-      l1 = l1.and_then(|node| { node.next });
-      l2 = l2.and_then(|node| { node.next });
+      l1 = l1.and_then(|node| node.next);
+      l2 = l2.and_then(|node| node.next);
     }
 
     result
@@ -95,6 +105,10 @@ mod tests {
   pub fn two_sum_test() {
     assert_two_sum(vec![2, 4, 3], vec![5, 6, 4], vec![7, 0, 8]);
     assert_two_sum(vec![0], vec![0], vec![0]);
-    assert_two_sum(vec![9,9,9,9,9,9,9], vec![9,9,9,9], vec![8,9,9,9,0,0,0,1]);
+    assert_two_sum(
+      vec![9, 9, 9, 9, 9, 9, 9],
+      vec![9, 9, 9, 9],
+      vec![8, 9, 9, 9, 0, 0, 0, 1],
+    );
   }
 }
