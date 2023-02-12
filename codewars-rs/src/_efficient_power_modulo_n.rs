@@ -1,44 +1,17 @@
 // https://www.codewars.com/kata/52fe629e48970ad2bd0007e6
-// FIXME: Not fast enough, fails on a timeout.
 
 pub fn power_mod(x: u64, y: u64, n: u64) -> u64 {
-  if y == 0 {
-    return x.pow(y as u32) % n;
-  }
-
-  let mut z = 1;
-  let mut m = x % n;
-
-  while z < y {
-    let gcd = fast_gcd(z, y);
-    if gcd == 1 {
-      break;
+  let mut m = 1 % n;
+  for i in 0..64u64 {
+    if y & (1u64 << i) != 0 {
+      let mut k = x % n;
+      for _ in 0..i {
+        k = (k * k) % n;
+      }
+      m = m * k % n;
     }
-    m = naive_power_mod(m, gcd, n);
-    z *= gcd;
-  }
-
-  while z < y {
-    m = (m * x) % n;
-    z += 1;
-  }
-
-  m
-}
-
-fn naive_power_mod(x: u64, y: u64, n: u64) -> u64 {
-  let mut m = 1;
-  for _ in 0..y {
-    m = (m * x) % n;
   }
   m
-}
-
-fn fast_gcd(mut x: u64, mut y: u64) -> u64 {
-  while y != 0 {
-    (x, y) = (y, x % y)
-  }
-  x
 }
 
 #[cfg(test)]
