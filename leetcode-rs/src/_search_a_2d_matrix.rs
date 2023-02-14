@@ -13,7 +13,7 @@ impl Solution {
 
   pub fn search_row(matrix: &[Vec<i32>], target: i32) -> Option<&[i32]> {
     let mut left_bound = 0;
-    let mut right_bound = matrix.len();
+    let mut right_bound = matrix.len() - 1;
 
     if *matrix.first()?.first()? > target {
       return None;
