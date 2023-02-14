@@ -6,4 +6,5 @@ pub mod _search_a_2d_matrix;
 pub mod _search_a_2d_matrix_ii;
 pub mod _search_in_rotated_sorted_array;
 pub mod _sqrt_x;
+pub mod _symmetric_tree;
 pub mod _two_sum;
