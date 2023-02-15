@@ -2,6 +2,7 @@ pub mod _add_two_numbers;
 pub mod _balanced_binary_tree;
 pub mod _binary_tree_inorder_traversal;
 pub mod _binary_tree_level_order_traversal;
+pub mod _binary_tree_maximum_path_sum;
 pub mod _median_of_two_sorted_arrays;
 pub mod _same_tree;
 pub mod _search_a_2d_matrix;
