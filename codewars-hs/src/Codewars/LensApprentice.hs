@@ -1,3 +1,5 @@
+-- https://www.codewars.com/kata/5cd99b8af446b0000ed8e615
+
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE Rank2Types #-}
 {-# LANGUAGE TupleSections #-}

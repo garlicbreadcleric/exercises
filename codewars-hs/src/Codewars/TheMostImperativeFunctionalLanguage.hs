@@ -1,3 +1,5 @@
+-- https://www.codewars.com/kata/5453af58e6c920858d000823
+
 {-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE TupleSections #-}
 
