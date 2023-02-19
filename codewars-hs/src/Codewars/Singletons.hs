@@ -1,5 +1,4 @@
 -- https://www.codewars.com/kata/54750ed320c64c64e20002e2
-
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE RankNTypes #-}
@@ -21,28 +20,24 @@ data SNat a where
   SZero :: SNat 'Zero
   SSucc :: SNat a -> SNat ('Succ a)
 
-type family (a :: Nat) :< (b :: Nat) :: Bool
+type family (a :: Nat) :< (b :: Nat) :: Bool where
+  m :< 'Zero = 'False
+  'Zero :< 'Succ n = 'True
+  ('Succ m) :< ('Succ n) = m :< n
 
-type instance m :< 'Zero = 'False
-type instance 'Zero :< 'Succ n = 'True
-type instance ('Succ m) :< ('Succ n) = m :< n
+type family Add (a :: Nat) (b :: Nat) :: Nat where
+  Add 'Zero b = b
+  Add ('Succ a) b = 'Succ (Add a b)
 
-type family Add (a :: Nat) (b :: Nat) :: Nat
+type family Sub (a :: Nat) (b :: Nat) :: Nat where
+  Sub 'Zero a = 'Zero
+  Sub a 'Zero = a
+  Sub ('Succ a) ('Succ b) = Sub a b
 
-type instance Add 'Zero b = b
-type instance Add ('Succ a) b = 'Succ (Add a b)
-
-type family Sub (a :: Nat) (b :: Nat) :: Nat
-
-type instance Sub 'Zero a = 'Zero
-type instance Sub a 'Zero = a
-type instance Sub ('Succ a) ('Succ b) = Sub a b
-
-type family Min (a :: Nat) (b :: Nat) :: Nat
-
-type instance Min a 'Zero = 'Zero
-type instance Min 'Zero b = 'Zero
-type instance Min ('Succ a) ('Succ b) = 'Succ (Min a b)
+type family Min (a :: Nat) (b :: Nat) :: Nat where
+  Min a 'Zero = 'Zero
+  Min 'Zero b = 'Zero
+  Min ('Succ a) ('Succ b) = 'Succ (Min a b)
 
 map :: (a -> b) -> Vec a n -> Vec b n
 map _ VNil = VNil
