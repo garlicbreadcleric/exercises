@@ -1,3 +1,5 @@
+-- https://www.codewars.com/kata/54258ffb430ca2e4b5000239
+
 {-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE TupleSections #-}
