@@ -6,7 +6,6 @@ global my_gcd
 global _main
 
 extern _printf
-extern _puts
 
 my_gcd:
     xor rax, rax
