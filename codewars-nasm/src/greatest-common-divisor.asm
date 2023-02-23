@@ -26,13 +26,15 @@ my_gcd:
 .ret:
     ret
 
-_main:
-    mov rdi, 28
-    mov rsi, 16
+%macro print_gcd 2
+    mov rdi, %1
+    mov rsi, %2
     call my_gcd
 
-    mov rsi, rax
-    lea rdi, [rel .gcd1_str]
+    mov rsi, %1
+    lea rdi, [rel .gcd_str]
+    mov rdx, %2
+    mov rcx, rax
     mov rax, 0
     sub rsp, 8
     mov al, 0
@@ -42,33 +44,15 @@ _main:
     mov rdi, 77
     mov rsi, 49
     call my_gcd
+%endmacro
 
-    mov rsi, rax
-    lea rdi, [rel .gcd2_str]
-    mov rax, 0
-    sub rsp, 8
-    mov al, 0
-    call _printf
-    add rsp, 8
-    
-    mov rdi, 678848322
-    mov rsi, 9958397878148688988
-    call my_gcd
-
-    mov rsi, rax
-    lea rdi, [rel .gcd3_str]
-    mov rax, 0
-    sub rsp, 8
-    mov al, 0
-    call _printf
-    add rsp, 8
+_main:
+    print_gcd 28, 16
+    print_gcd 77, 48
+    print_gcd 678848322, 9958397878148688988
 
     mov rax, 0x02000001
     xor rdi, rdi
     syscall
-.gcd1_str:
-    db "gcd(28, 16) = %d", 10, 0
-.gcd2_str:
-    db "gcd(77, 49) = %d", 10, 0
-.gcd3_str:
-    db "gcd(678848322, 9958397878148688988) = %d", 10, 0
+.gcd_str:
+    db "gcd(%lu, %lu) = %lu", 10, 0
