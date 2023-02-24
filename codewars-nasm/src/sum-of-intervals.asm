@@ -52,7 +52,7 @@ sumintvls:
     cmp     ecx, r9d                                            ; If current interval start is not less than previous interval end,
     jnl     .calculate_intvl_diff                               ; then it should be processed fully.
 
-    mov     ecx, r9d                                            ; Ottherwise, set current interval start to last interval end.
+    mov     ecx, r9d                                            ; Otherwise, set current interval start to last interval end.
 
 .calculate_intvl_diff:
     sub     edx, ecx
