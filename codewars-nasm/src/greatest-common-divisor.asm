@@ -36,7 +36,6 @@ my_gcd:
     mov rcx, rax
     mov rax, 0
     sub rsp, 8
-    mov al, 0
     call _printf
     add rsp, 8
 

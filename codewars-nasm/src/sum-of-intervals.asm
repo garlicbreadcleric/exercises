@@ -115,7 +115,6 @@ _main:
 
     lea         rdi, [rel .sumintvls_str]
     mov         rsi, rax
-    mov         al, 2
     sub         rsp, 8
     call        _printf
     add         rsp, 8
