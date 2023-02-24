@@ -4,9 +4,9 @@ section .data
 
 ; Multiples less than or equal to 15.
 mle15:
-    dd 3, 5, 6, 9, 10, 12, 15
+    dd  3, 5, 6, 9, 10, 12, 15
 mul3or5_str:
-    db "mul3or5(%d) = %u", 10, 0
+    db  "mul3or5(%d) = %u", 10, 0
 
 %define mle15_len 7
 
@@ -25,7 +25,7 @@ mul3or5:
 .loop:
     cmp rcx, mle15_len * 4
     
-    jl .next_multiple
+    jl  .next_multiple
     
     xor rcx, rcx
     add ebx, 15
