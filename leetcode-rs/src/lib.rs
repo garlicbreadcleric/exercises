@@ -3,6 +3,7 @@ pub mod _balanced_binary_tree;
 pub mod _binary_tree_inorder_traversal;
 pub mod _binary_tree_level_order_traversal;
 pub mod _binary_tree_maximum_path_sum;
+pub mod _maximum_gap;
 pub mod _median_of_two_sorted_arrays;
 pub mod _plus_one;
 pub mod _pow_x_n;
