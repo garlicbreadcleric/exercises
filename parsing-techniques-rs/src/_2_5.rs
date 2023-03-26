@@ -1,5 +1,4 @@
 use once_cell::sync::Lazy;
-use rand::prelude::*;
 
 pub type NonTerminal = char;
 pub type Terminal = char;
@@ -42,8 +41,8 @@ impl Symbol {
 
 #[derive(Clone)]
 pub struct Rule {
-  left: Vec<Symbol>,
-  right: Vec<Symbol>,
+  pub left: Vec<Symbol>,
+  pub right: Vec<Symbol>,
 }
 
 impl Rule {
@@ -58,14 +57,14 @@ impl Rule {
 
 #[derive(Debug)]
 pub struct GrammarLog {
-  before: String,
-  after: String,
+  pub before: String,
+  pub after: String,
 }
 
 #[derive(Clone)]
 pub struct Grammar {
-  rules: Vec<Rule>,
-  initials: Vec<NonTerminal>,
+  pub rules: Vec<Rule>,
+  pub initials: Vec<NonTerminal>,
 }
 
 impl Grammar {
@@ -91,7 +90,7 @@ impl Grammar {
 /// B -> _
 /// E -> _
 /// ```
-static GRAMMAR: Lazy<Grammar> = Lazy::new(|| {
+pub static GRAMMAR: Lazy<Grammar> = Lazy::new(|| {
   Grammar::new(
     vec!['S'],
     vec![

@@ -58,14 +58,14 @@ impl Rule {
 
 #[derive(Debug)]
 pub struct GrammarLog {
-  before: String,
-  after: String,
+  pub before: String,
+  pub after: String,
 }
 
 #[derive(Clone)]
 pub struct Grammar {
-  rules: Vec<Rule>,
-  initials: Vec<NonTerminal>,
+  pub rules: Vec<Rule>,
+  pub initials: Vec<NonTerminal>,
 }
 
 impl Grammar {
@@ -75,9 +75,9 @@ impl Grammar {
 }
 
 pub struct GrammarMachine {
-  grammar: Grammar,
-  symbols: Vec<Symbol>,
-  log: Vec<GrammarLog>,
+  pub grammar: Grammar,
+  pub symbols: Vec<Symbol>,
+  pub log: Vec<GrammarLog>,
 }
 
 impl GrammarMachine {
@@ -126,7 +126,7 @@ impl GrammarMachine {
 /// S -> SeS | SnS | SsS
 /// S -> ϵ
 /// ```
-static GRAMMAR: Lazy<Grammar> = Lazy::new(|| {
+pub static GRAMMAR: Lazy<Grammar> = Lazy::new(|| {
   Grammar::new(
     vec!['S'],
     vec![
