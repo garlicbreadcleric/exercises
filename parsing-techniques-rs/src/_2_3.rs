@@ -1,3 +1,4 @@
+use once_cell::sync::Lazy;
 use rand::prelude::*;
 
 pub type NonTerminal = char;
@@ -39,6 +40,7 @@ impl Symbol {
   }
 }
 
+#[derive(Clone)]
 pub struct Rule {
   left: NonTerminal,
   right: Vec<Symbol>,
@@ -48,6 +50,10 @@ impl Rule {
   pub fn new(left: char, right: Vec<Symbol>) -> Rule {
     Rule { left, right }
   }
+
+  pub fn parse(left: char, right: &str) -> Rule {
+    Rule { left, right: right.chars().map(Symbol::from_char).collect() }
+  }
 }
 
 #[derive(Debug)]
@@ -56,6 +62,7 @@ pub struct GrammarLog {
   after: String,
 }
 
+#[derive(Clone)]
 pub struct Grammar {
   rules: Vec<Rule>,
   initials: Vec<NonTerminal>,
@@ -79,11 +86,7 @@ impl GrammarMachine {
     for c in &grammar.initials {
       symbols.push(Symbol::from_char(*c));
     }
-    GrammarMachine {
-      grammar,
-      symbols,
-      log: vec![],
-    }
+    GrammarMachine { grammar, symbols, log: vec![] }
   }
 
   pub fn apply_random_rule(&mut self) {
@@ -117,22 +120,24 @@ impl GrammarMachine {
 }
 
 /// Grammar for a Manhattan turtle that is not allowed to the west of it's starting point.
-/// 
+///
 /// ```text
 /// S -> SeSwS
 /// S -> SeS | SnS | SsS
 /// S -> ϵ
 /// ```
-#[rustfmt::skip]
-pub fn manhattan_turtle_not_allowed_west_grammar() -> Grammar {
-  Grammar::new(vec!['S'], vec![
-    Rule::new('S', vec![Symbol::from_char('S'), Symbol::from_char('e'), Symbol::from_char('S'), Symbol::from_char('w'), Symbol::from_char('S')]),
-    Rule::new('S', vec![Symbol::from_char('S'), Symbol::from_char('e'), Symbol::from_char('S')]),
-    Rule::new('S', vec![Symbol::from_char('S'), Symbol::from_char('n'), Symbol::from_char('S')]),
-    Rule::new('S', vec![Symbol::from_char('S'), Symbol::from_char('s'), Symbol::from_char('S')]),
-    Rule::new('S', vec![])
-  ])
-}
+static GRAMMAR: Lazy<Grammar> = Lazy::new(|| {
+  Grammar::new(
+    vec!['S'],
+    vec![
+      Rule::parse('S', "SeSwS"),
+      Rule::parse('S', "SeS"),
+      Rule::parse('S', "SnS"),
+      Rule::parse('S', "SsS"),
+      Rule::parse('S', ""),
+    ],
+  )
+});
 
 #[rustfmt::skip]
 pub fn is_valid_manhattan_turtle_path(symbols: &[Symbol]) -> bool {
@@ -160,7 +165,7 @@ mod tests {
   #[test]
   pub fn manhattan_turtle_test() {
     for _ in 0..10 {
-      let mut gm = GrammarMachine::new(manhattan_turtle_not_allowed_west_grammar());
+      let mut gm = GrammarMachine::new(GRAMMAR.clone());
 
       for _ in 0..1000 {
         gm.apply_random_rule();
