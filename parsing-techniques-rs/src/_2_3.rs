@@ -65,28 +65,25 @@ pub struct GrammarLog {
 #[derive(Clone)]
 pub struct Grammar {
   pub rules: Vec<Rule>,
-  pub initials: Vec<NonTerminal>,
+  pub initial: NonTerminal,
 }
 
 impl Grammar {
-  fn new(initials: Vec<NonTerminal>, rules: Vec<Rule>) -> Grammar {
-    Grammar { initials, rules }
+  fn new(initial: NonTerminal, rules: Vec<Rule>) -> Grammar {
+    Grammar { initial, rules }
   }
 }
 
-pub struct GrammarMachine {
+pub struct RandomGrammarMachine {
   pub grammar: Grammar,
   pub symbols: Vec<Symbol>,
   pub log: Vec<GrammarLog>,
 }
 
-impl GrammarMachine {
-  pub fn new(grammar: Grammar) -> GrammarMachine {
-    let mut symbols = vec![];
-    for c in &grammar.initials {
-      symbols.push(Symbol::from_char(*c));
-    }
-    GrammarMachine { grammar, symbols, log: vec![] }
+impl RandomGrammarMachine {
+  pub fn new(grammar: Grammar) -> RandomGrammarMachine {
+    let symbols = vec![Symbol::from_char(grammar.initial)];
+    RandomGrammarMachine { grammar, symbols, log: vec![] }
   }
 
   pub fn apply_random_rule(&mut self) {
@@ -128,7 +125,7 @@ impl GrammarMachine {
 /// ```
 pub static GRAMMAR: Lazy<Grammar> = Lazy::new(|| {
   Grammar::new(
-    vec!['S'],
+    'S',
     vec![
       Rule::parse('S', "SeSwS"),
       Rule::parse('S', "SeS"),
@@ -166,7 +163,7 @@ mod tests {
   #[test]
   pub fn manhattan_turtle_test() {
     for _ in 0..10 {
-      let mut gm = GrammarMachine::new(GRAMMAR.clone());
+      let mut gm = RandomGrammarMachine::new(GRAMMAR.clone());
 
       for _ in 0..1000 {
         gm.apply_random_rule();
