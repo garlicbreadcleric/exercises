@@ -139,21 +139,22 @@ pub static GRAMMAR: Lazy<Grammar> = Lazy::new(|| {
   )
 });
 
-#[rustfmt::skip]
 pub fn is_valid_manhattan_turtle_path(symbols: &[Symbol]) -> bool {
   let mut position = (0, 0);
   for s in symbols {
     if let Symbol::Terminal(c) = s {
       match c {
-        'e' => { position.0 += 1; },
-        'w' => { position.0 -= 1; },
-        'n' => { position.1 += 1; },
-        's' => { position.1 -= 1; },
-        _ => { return false; },
+        'e' => position.0 += 1,
+        'w' => position.0 -= 1,
+        'n' => position.1 += 1,
+        's' => position.1 -= 1,
+        _ => return false,
       }
     }
 
-    if position.0 < 0 { return false; }
+    if position.0 < 0 {
+      return false;
+    }
   }
   true
 }
